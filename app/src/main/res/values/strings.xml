@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Ramsete</string>
+    <string name="trova_il_qr">Trova il QR!</string>
+    <string name="new_scan">Nuova Scan</string>
+    <string name="help">Aiuto</string>
+    <string name="dammi_il_numero">dammi il numero!</string>
+    <string name="quiz">Quiz</string>
+</resources>
