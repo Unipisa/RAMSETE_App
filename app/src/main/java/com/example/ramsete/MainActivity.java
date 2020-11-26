@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setContentView(R.layout.activity_main);
 
+
         scanBtn = findViewById(R.id.scanBtn);
         scanBtn.setOnClickListener(this);
 
