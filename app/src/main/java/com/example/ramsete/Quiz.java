@@ -6,8 +6,15 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
 
 public class Quiz extends AppCompatActivity {
 
@@ -29,9 +36,22 @@ public class Quiz extends AppCompatActivity {
         myWebSettings.setLoadWithOverviewMode(true);
         myWebSettings.setUseWideViewPort(true);
 
-
-
-
         myWebView.loadUrl("https://gamificationmuseo.ml/quiz-2/");
+
+        //voglio capire quale sia il plugin
+        Document doc = null;
+        try {
+            doc = Jsoup.connect("https://gamificationmuseo.ml/quiz-2/").get();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Failed to connect: "+e);
+        }
+
+        Elements postwpoints = doc.select("meta[property]");
+
+        String tipo = postwpoints.attr("property");
+        String plugin_name = postwpoints.attr("content");
+
+        Toast.makeText(this, plugin_name+" "+tipo, Toast.LENGTH_LONG).show();
     }
 }
