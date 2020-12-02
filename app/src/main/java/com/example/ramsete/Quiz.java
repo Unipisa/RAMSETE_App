@@ -36,7 +36,7 @@ public class Quiz extends AppCompatActivity {
         myWebSettings.setLoadWithOverviewMode(true);
         myWebSettings.setUseWideViewPort(true);
 
-        myWebView.loadUrl("https://gamificationmuseo.ml/quiz-2/");
+        myWebView.loadUrl(getIntent().getStringExtra("CERTOSA_PAGE_ID"));
 
         //voglio capire quale sia il plugin
         Document doc = null;
