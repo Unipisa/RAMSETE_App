@@ -36,22 +36,33 @@ public class Quiz extends AppCompatActivity {
         myWebSettings.setLoadWithOverviewMode(true);
         myWebSettings.setUseWideViewPort(true);
 
-        myWebView.loadUrl(getIntent().getStringExtra("CERTOSA_PAGE_ID"));
+        //l'url è salvata nei contenuti dell'intent che vengono dalla lettura del QR
+        String gameUrl = getIntent().getStringExtra("CERTOSA_PAGE_ID");
+
+        myWebView.loadUrl(gameUrl);
 
         //voglio capire quale sia il plugin
+        //mi connetto alla pagina giusta
         Document doc = null;
         try {
-            doc = Jsoup.connect("https://gamificationmuseo.ml/quiz-2/").get();
+            doc = Jsoup.connect(gameUrl).get();
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Failed to connect: "+e);
         }
 
+        //seleziono il meta giusto
         Elements postwpoints = doc.select("meta[property]");
 
         String tipo = postwpoints.attr("property");
-        String plugin_name = postwpoints.attr("content");
+        // se la proprietà non ha il valore giusto... dico di riprovare
+        if(!tipo.equals("quiz_QSM")){
+            Toast.makeText(this, tipo+" non è questo il tipo di pagina che cerco", Toast.LENGTH_LONG).show();
+            finish();
+        }else{
+            String plugin_name = postwpoints.attr("content");
 
-        Toast.makeText(this, plugin_name+" "+tipo, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, plugin_name+"|||"+tipo, Toast.LENGTH_LONG).show();
+        }
     }
 }
