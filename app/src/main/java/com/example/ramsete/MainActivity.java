@@ -23,8 +23,12 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    //bottone della scan del QR code
+    //attualmente porta anche sul sito una volta scannerizzato il QR
     Button scanBtn;
+    //bottone del punteggio
     Button gimPoi;
+    //bottone per il quiz
     Button quiz;
 
     @Override
@@ -97,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         integrator.initiateScan();
     }
 
+    //bottone del codice QR
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
