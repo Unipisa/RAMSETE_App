@@ -9,29 +9,51 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 
 class JavaScriptInterface {
+
     private Context ctx;
     private WebView webView;
-
     String name;
-    //vado a creare l'interfaccia Javascript che verrà iniettata nella pagina html
+
+    /** Constructor of JavaScriptInterface class
+     * with this you can inject JS code into the webview specified
+     *
+     * @param ctx   context from which I'm calling
+     * @param webView Webview where I want to inject JS code
+     * @param name name of the interface injected
+     */
     JavaScriptInterface(Context ctx, WebView webView, String name) {
         this.ctx = ctx;
         this.webView = webView;
         this.name = name;
     }
-
     //mi dirà quando cambia l'elemento che mi interessa
+
+    /**When the element changes prints out the new value
+     *
+     * @param newValue value of the element changed
+     */
     @JavascriptInterface
     public void onElementChanged(String newValue) {
         Toast.makeText(ctx, newValue, Toast.LENGTH_LONG).show();
     }
-
+    //version required at least KITKAT
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    /**
+     * Observes changes that occur in the value of the class
+     * also evaluates the JS code injected
+     *
+     * @param scoreJSClassName name of the class that contains the value
+     */
     public void observeFinalScore(String scoreJSClassName) {
         webView.evaluateJavascript(observeElementByClassName(scoreJSClassName, this.name), null);
     }
 
-    //l'effettivo codice JS iniettato
+    /**Observes when a specified class changes
+     *
+     * @param elementClassName the class to observe
+     * @param jsIName the name of the JS interface injected
+     * @return the javascript code injected
+     */
     private String observeElementByClassName(String elementClassName, String jsIName) {
         return "// Select the node that will be observed for mutations\n" +
                 "var targetNode = document.getElementsByClassName('" + elementClassName + "')[0];\n" +

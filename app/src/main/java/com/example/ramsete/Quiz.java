@@ -10,33 +10,40 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class Quiz extends AppCompatActivity {
 
-    //l'url a cui si dovrà connettere
+    //url to connect to
     String url = null;
-    //l'url usata per il testing
+    //url for testing
     //"https://www.opinionstage.com/nastilucia1/inizia-la-tua-avventura-nel-museo?wid=%2Fnastilucia1%2Finizia-la-tua-avventura-nel-museohttps://www.opinionstage.com/nastilucia1/inizia-la-tua-avventura-nel-museo?wid=%2Fnastilucia1%2Finizia-la-tua-avventura-nel-museo-0&em=1&comments=&referring_widget=%2Fnastilucia1%2Finizia-la-tua-avventura-nel-museo&autoswitch=1&of=nastilucia1&os_utm_source=&referring_widget=%2Fnastilucia1%2Finizia-la-tua-avventura-nel-museo&autoswitch=1&of=nastilucia1&os_utm_source=";
 
+    //webview seen by user
     private WebView myWebView;
+    //settings necessary to inject JS code
     private WebSettings myWebSettings;
+    //class needed to inject JS interface into html page
     private JavaScriptInterface js;
 
     protected void onCreate(Bundle savedInstanceState) {
+        //get caller Activity state
         super.onCreate(savedInstanceState);
+        //set layout of this activity from quiz.xml file
         setContentView(R.layout.quiz);
+        //finds view id from quiz.xml
         myWebView = (WebView) findViewById(R.id.quizzone);
-        //questo per non farlo uscire dalla webview
+        //declaring Client for this webview
         myWebView.setWebViewClient(new WebViewClient());
 
-        //mettiamo le impostazioni corrette per vedere tutta la pagina
+        //get settings to see whole page
         myWebSettings = myWebView.getSettings();
-        //per le cose javascript
+        //enables JS execution in the webview
         myWebSettings.setJavaScriptEnabled(true);
-        //non vogliamo la pagina troppo zoommata
-        //qui inizializzo l'interfaccia Javascript
+        //JS interface initialization
         js = new JavaScriptInterface(this, myWebView, "JavaScriptInterface");
-        //l'aggiungo alla webview
+        //adding JS to the webview
         myWebView.addJavascriptInterface(js, js.name);
-        //qui osserva il punteggio
+        //add score observer when page has finished loading to the client
         myWebView.setWebViewClient(new WebViewClient() {
+            //inject JS code when page finished loading
+            //checks for a specific class (the one that contains the score)
             @SuppressLint("NewApi")
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -44,12 +51,12 @@ public class Quiz extends AppCompatActivity {
                 js.observeFinalScore("header-area css-api-card-header css-api-card-header--closing");
             }
         });
-        //recupero l'url dai dati extra dell'intent
+        //get url from intent's extra data
         url = getIntent().getStringExtra("CERTOSA_PAGE_ID");
-        //carico infine l'url
+        //load url
         myWebView.loadUrl(url);
 
-        //voglio capire quale sia il plugin
+        //obsolete code useful to check plugin type on wordpress page (if specified with MetaTagManager)
        /* Document doc = null;
         try {
             doc = Jsoup.connect("https://gamificationmuseo.ml/quiz-2/").get();
