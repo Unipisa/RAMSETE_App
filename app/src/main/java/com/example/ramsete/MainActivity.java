@@ -3,6 +3,7 @@ package com.example.ramsete;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +24,11 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+
+    //all activities's requestCodes
+    //login activity = 1;
+    //QR activity = 0x0000c0de
+
     //QRcode scanner button
     //also takes you to the site once the scan it's finished
     Button scanBtn;
@@ -38,6 +44,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //UI can now FREEZE but it's NOT GOOD AND HAS TO BE DELETED
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+        //before actually starting it needs to create a login activity
+        Intent loginIntent = new Intent(this,Login.class);
+        startActivityForResult(loginIntent,1);
 
         //shows the layout defined in activity_main.xml
         setContentView(R.layout.activity_main);
@@ -119,27 +129,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //waits scanner result
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        //prendo il risultato dell'activity che dovrebbe essere un link
-        //takes activivty's result (should be a link)
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null){
-            if (result.getContents() != null){
+        switch (requestCode) {
 
-                //once getContents != null they're added to the intent so Quiz class can get them
-                Intent intent = new Intent(this,Quiz.class);
-                intent.putExtra("CERTOSA_PAGE_ID",result.getContents());
-                //starts new Quiz activity
-                this.startActivity(intent);
+            //login activity's request code
+            case 1:{
+                //if login finished with success, give access to main activity
+                if(resultCode == Activity.RESULT_OK){
+                    Toast.makeText(this,"Login effettuato con successo!", Toast.LENGTH_LONG).show();
+                }else{
+                    //terminate app if login not good
+                    finish();
+                }
 
+                break;
             }
-            else{
-                //if contents==null, DON'T try again
-                Toast.makeText(this, "Niente, non ho trovato nulla", Toast.LENGTH_LONG).show();
+            //this requestCode is the QR scan one
+            case 0x0000c0de: {
+                //takes activivty's result (should be a link)
+                IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+                if (result != null) {
+                    if (result.getContents() != null) {
+
+                        //once getContents != null they're added to the intent so Quiz class can get them
+                        Intent intent = new Intent(this, Quiz.class);
+                        intent.putExtra("CERTOSA_PAGE_ID", result.getContents());
+                        //starts new Quiz activity
+                        this.startActivity(intent);
+
+                    } else {
+                        //if contents==null, DON'T try again
+                        Toast.makeText(this, "Niente, non ho trovato nulla", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    //if result == null, try again
+                    super.onActivityResult(requestCode, resultCode, data);
+                }
+                break;
             }
-        }
-        else{
-            //if result == null, try again
-            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 

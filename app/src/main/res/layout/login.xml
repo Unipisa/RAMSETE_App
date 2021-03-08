@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:backgroundTint="#9E4E1C">
+
+    <EditText
+        android:id="@+id/userName"
+        android:layout_width="260dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:hint="@string/userNameString"
+        app:layout_constraintEnd_toEndOf="@+id/loginTitle"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="@+id/loginTitle"
+        app:layout_constraintTop_toBottomOf="@+id/loginTitle" />
+
+    <EditText
+        android:id="@+id/pass"
+        android:layout_width="260dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:hint="@string/passHint"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="@+id/userName"
+        app:layout_constraintStart_toStartOf="@+id/userName"
+        app:layout_constraintTop_toBottomOf="@+id/userName" />
+
+    <TextView
+        android:id="@+id/appTitle"
+        android:layout_width="213dp"
+        android:layout_height="63dp"
+        android:text="@string/appTitle"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#EB8342"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.079" />
+
+    <TextView
+        android:id="@+id/loginTitle"
+        android:layout_width="87dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/loginTitle"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/appTitle"
+        app:layout_constraintStart_toStartOf="@+id/appTitle"
+        app:layout_constraintTop_toBottomOf="@+id/appTitle" />
+
+    <LinearLayout
+        android:layout_width="261dp"
+        android:layout_height="33dp"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/loginButton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/loginButton"
+        app:layout_constraintTop_toBottomOf="@+id/loginButton"
+        app:layout_constraintVertical_bias="0.02">
+
+        <TextView
+            android:id="@+id/forgottenPsw_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Password dimenticata?"
+            android:textAlignment="center"
+            android:textColor="#673AB7" />
+
+        <TextView
+            android:id="@+id/registerNow_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Registrati ora!"
+            android:textAlignment="center"
+            android:textColor="#FF5722" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="260dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#6B60EB"
+        android:text="@string/loginButtonString"
+        android:textColor="#EB8342"
+        app:layout_constraintEnd_toEndOf="@+id/pass"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/pass"
+        app:layout_constraintTop_toBottomOf="@+id/pass" />
+</androidx.constraintlayout.widget.ConstraintLayout>
