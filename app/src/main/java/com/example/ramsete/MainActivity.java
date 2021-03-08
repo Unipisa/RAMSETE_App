@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //all activities's requestCodes
     //login activity = 1;
     //QR activity = 0x0000c0de
+    //String for username
+    String usrName = null;
 
     //QRcode scanner button
     //also takes you to the site once the scan it's finished
@@ -135,7 +137,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case 1:{
                 //if login finished with success, give access to main activity
                 if(resultCode == Activity.RESULT_OK){
-                    Toast.makeText(this,"Login effettuato con successo!", Toast.LENGTH_LONG).show();
+                    usrName = data.getStringExtra("USER_NAME");
+                    Toast.makeText(this,"Login effettuato con successo, benvenut* "+ usrName, Toast.LENGTH_LONG).show();
                 }else{
                     //terminate app if login not good
                     finish();
@@ -153,6 +156,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         //once getContents != null they're added to the intent so Quiz class can get them
                         Intent intent = new Intent(this, Quiz.class);
                         intent.putExtra("CERTOSA_PAGE_ID", result.getContents());
+                        //TODO retrieving username could be from file in the future
+                        //adding username so ops with server available to Quiz
+                        intent.putExtra("USER_NAME",usrName);
                         //starts new Quiz activity
                         this.startActivity(intent);
 
