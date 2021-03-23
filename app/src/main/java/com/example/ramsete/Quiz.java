@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -21,6 +22,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Iterator;
 
 import static java.lang.Integer.parseInt;
 
@@ -30,6 +32,9 @@ public class Quiz extends AppCompatActivity {
     String url = null;
     //url for testing
     //"https://www.opinionstage.com/nastilucia1/inizia-la-tua-avventura-nel-museo?wid=%2Fnastilucia1%2Finizia-la-tua-avventura-nel-museohttps://www.opinionstage.com/nastilucia1/inizia-la-tua-avventura-nel-museo?wid=%2Fnastilucia1%2Finizia-la-tua-avventura-nel-museo-0&em=1&comments=&referring_widget=%2Fnastilucia1%2Finizia-la-tua-avventura-nel-museo&autoswitch=1&of=nastilucia1&os_utm_source=&referring_widget=%2Fnastilucia1%2Finizia-la-tua-avventura-nel-museo&autoswitch=1&of=nastilucia1&os_utm_source=";
+
+    //bonus points based on #qr found
+    int bonus = 0;
 
     //username for ops with server
     String usrName= null;
@@ -59,7 +64,10 @@ public class Quiz extends AppCompatActivity {
         //get username from intent's extra data
         usrName = getIntent().getStringExtra("USER_NAME");
 
-        //take QRID (2nd part of string)
+        //better reset bonus here too
+        bonus = 0;
+
+        //take QRID (3rd part of url)
         String[] segmnUrl = url.split("/");
         //check if QRID already present
         URL urlQRIDCheck = null;
@@ -92,6 +100,28 @@ public class Quiz extends AppCompatActivity {
                 finish();
             }
 
+            //confirmation not null so usrData should be not null
+            //counts #qr, if #qr % 2 == 0 then adds bonus points to current qr
+            //jsonarray in the jsonobject returned
+            JSONArray qrArr = (JSONArray) ((JSONObject)usrData).get("progress");
+            if(qrArr == null){
+                System.out.println("l'array c'è");
+            }
+            //iterator for qr array
+            Iterator<JSONObject> iterator = qrArr.iterator();
+            //number of qrs
+            int countQR = 0;
+            //counts all qrs
+            while(iterator.hasNext()){
+                System.out.println(iterator.next());
+                countQR++;
+            }
+            //every 2 qrs gives bouns
+            if((countQR % 2) == 0){
+                Toast.makeText(this, "Yuhuu! Questo QR ti dà punti bonus!", Toast.LENGTH_LONG).show();
+                bonus += 3;
+            }
+
             //get the confirmation
             //see if it's different from 0
             Integer intQRCheck = parseInt(result.toString().trim());
@@ -100,11 +130,10 @@ public class Quiz extends AppCompatActivity {
                 //if confirmation ok return result and terminate activity
                 Toast.makeText(this, "Fantastico, hai trovato il tuo primo QR!", Toast.LENGTH_LONG).show();
             } else if(intQRCheck == 2){ // code for QR already found
-                //TODO finire di aggiungere le opzioni degli errori del qr
-                    // aggiungere nuova activity che chiede se si vuole rifare il QR o meno
-                    //aggiungere un sistema che conta i QR IDs e ti dà punti extra
-                //if confirmation not ok display message and let user retry
-                Toast.makeText(getApplicationContext(), "QR già trovato", Toast.LENGTH_SHORT).show();
+                //declare/initialize new intent and start popup activity
+                Intent popIntent = new Intent(this,Pop.class);
+                startActivityForResult(popIntent,3);
+
             }else if(intQRCheck < 0){//-1 is update gone wrong and -2 is QR null, no need to differentiate
                 //still terminate activity
                 Toast.makeText(getApplicationContext(), "errore nell'aggiunta del QR", Toast.LENGTH_SHORT).show();
@@ -126,7 +155,7 @@ public class Quiz extends AppCompatActivity {
         //enables JS execution in the webview
         myWebSettings.setJavaScriptEnabled(true);
         //JS interface initialization
-        js = new JavaScriptInterface(this, myWebView, "JavaScriptInterface",usrName,segmnUrl[3]);
+        js = new JavaScriptInterface(this, myWebView, "JavaScriptInterface",usrName,segmnUrl[3],bonus);
         //adding JS to the webview
         myWebView.addJavascriptInterface(js, js.name);
         //add score observer when page has finished loading to the client
@@ -161,5 +190,19 @@ public class Quiz extends AppCompatActivity {
         String plugin_name = postwpoints.attr("content");
 
         Toast.makeText(this, plugin_name + " " + tipo, Toast.LENGTH_LONG).show(); */
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case 3:
+                //when the popup closes if result ok then close Quiz
+                if(resultCode == Activity.RESULT_OK){
+                    finish();
+                }
+
+                break;
+        }
     }
 }

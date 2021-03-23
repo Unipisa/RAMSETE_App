@@ -45,6 +45,12 @@
 
         </activity>
 
+        <activity android:name=".Pop"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/AppTheme.popUpTheme">
+
+        </activity>
+
 
     </application>
 

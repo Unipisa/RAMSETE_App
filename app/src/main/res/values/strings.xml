@@ -18,4 +18,8 @@
     <string name="registerTitle">Registrati</string>
     <string name="registerConfirmation">Fatto</string>
     <string name="incorrectUsrNmOrPsw_login">Username o password non corretti!</string>
+    <string name="redo_yes">Sì</string>
+    <string name="redo_no">No</string>
+    <string name="redo_question">Hai già trovato questo QR, se procedi resetterai il tuo punteggio precedente... Vuoi continuare?</string>
+    <string name="redo_titleText">Uh... Oh...</string>
 </resources>

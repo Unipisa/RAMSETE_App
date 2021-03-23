@@ -34,6 +34,8 @@ class JavaScriptInterface {
     //name of user
     String userName;
     String QR;
+    //bonus points are added to the current animal points
+    int bonus;
 
     /** Constructor of JavaScriptInterface class
      * with this you can inject JS code into the webview specified
@@ -43,13 +45,15 @@ class JavaScriptInterface {
      * @param name name of the interface injected
      * @param userName name of user logged
      * @param QR id of QR found
+     * @param bonus bonus points to add
      */
-    JavaScriptInterface(Context ctx, WebView webView, String name, String userName, String QR) {
+    JavaScriptInterface(Context ctx, WebView webView, String name, String userName, String QR, int bonus) {
         this.ctx = ctx;
         this.webView = webView;
         this.name = name;
         this.userName = userName;
         this.QR = QR;
+        this.bonus = bonus;
     }
     //mi dirà quando cambia l'elemento che mi interessa
 
@@ -64,6 +68,10 @@ class JavaScriptInterface {
         //let's split it
         //newValSplit[0]->points
         String[] newValSplit = newValue.split("/");
+
+        //adding bonus points to current animal
+        int pointsTotal = Integer.parseInt(newValSplit[0]) + bonus;
+
         //animalSplit[1]->animal name
         String[] animalSplit = newValSplit[1].split(" ");
 
@@ -123,7 +131,7 @@ class JavaScriptInterface {
 
         //then add points to qr
         try {
-            urlQRIDCheck = new URL("https://gamificationmuseo.ml/nebettaui.php?op=updatePoints&name="+userName+"&QR="+QR+"&animal="+animalSplit[1]+"&points="+newValSplit[0]);
+            urlQRIDCheck = new URL("https://gamificationmuseo.ml/nebettaui.php?op=updatePoints&name="+userName+"&QR="+QR+"&animal="+animalSplit[1]+"&points="+pointsTotal);
 
             URLConnection urlCon = urlQRIDCheck.openConnection();
             urlCon.connect();
