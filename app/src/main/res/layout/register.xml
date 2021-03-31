@@ -5,41 +5,70 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.5"
+        android:scaleX="3"
+        android:scaleY="3"
+        android:translationX="190sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.273"
+        app:srcCompat="@drawable/rough_beige_paper_texture" />
+
     <TextView
         android:id="@+id/register_title"
-        android:layout_width="160dp"
-        android:layout_height="42dp"
+        android:layout_width="305dp"
+        android:layout_height="87dp"
         android:layout_marginTop="4dp"
+        android:fontFamily="@font/amperzandseconcoming"
         android:text="@string/registerTitle"
         android:textAlignment="center"
-        android:textColor="#673AB7"
-        android:textSize="24sp"
+        android:textColor="#4F83A8"
+        android:textSize="70sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appTitle_register" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.095" />
 
     <EditText
         android:id="@+id/userName_field"
-        android:layout_width="260dp"
-        android:layout_height="wrap_content"
+        android:layout_width="290dp"
+        android:layout_height="40dp"
         android:layout_marginTop="20dp"
+        android:background="@drawable/colonnemarroni"
         android:ems="10"
+        android:fontFamily="@font/ammaanneysecondcoming"
         android:hint="@string/userName_register"
         android:inputType="textPersonName"
+        android:textAlignment="center"
+        android:textColor="#975F6D"
+        android:textColorHint="#80975F6D"
+        android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/register_title" />
 
     <EditText
         android:id="@+id/pass_field"
-        android:layout_width="260dp"
-        android:layout_height="wrap_content"
+        android:layout_width="290dp"
+        android:layout_height="40dp"
         android:layout_marginTop="10dp"
+        android:background="@drawable/colonnemarroni"
         android:ems="10"
+        android:fontFamily="@font/ammaanneysecondcoming"
         android:hint="@string/pass_register"
         android:inputType="textPassword"
+        android:textAlignment="center"
+        android:textColor="#975F6D"
+        android:textColorHint="#80975F6D"
+        android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="@+id/userName_field"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/userName_field"
@@ -47,12 +76,18 @@
 
     <EditText
         android:id="@+id/confirmPass_field"
-        android:layout_width="260dp"
-        android:layout_height="wrap_content"
+        android:layout_width="290dp"
+        android:layout_height="40dp"
         android:layout_marginTop="10dp"
+        android:background="@drawable/colonnemarroni"
         android:ems="10"
+        android:fontFamily="@font/ammaanneysecondcoming"
         android:hint="@string/confirmPass_register"
         android:inputType="textPassword"
+        android:textAlignment="center"
+        android:textColor="#975F6D"
+        android:textColorHint="#80975F6D"
+        android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="@+id/pass_field"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/pass_field"
@@ -60,12 +95,18 @@
 
     <EditText
         android:id="@+id/email_field"
-        android:layout_width="260dp"
-        android:layout_height="wrap_content"
+        android:layout_width="290dp"
+        android:layout_height="40dp"
         android:layout_marginTop="10dp"
+        android:background="@drawable/colonnemarroni"
         android:ems="10"
+        android:fontFamily="@font/ammaanneysecondcoming"
         android:hint="@string/email_register"
         android:inputType="textEmailAddress"
+        android:textAlignment="center"
+        android:textColor="#975F6D"
+        android:textColorHint="#80975F6D"
+        android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="@+id/confirmPass_field"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/confirmPass_field"
@@ -73,50 +114,53 @@
 
     <Button
         android:id="@+id/registerButton"
-        android:layout_width="260dp"
+        android:layout_width="290dp"
         android:layout_height="40dp"
         android:layout_marginTop="20dp"
-        android:backgroundTint="#EB8342"
+        android:background="@drawable/colonnebottone"
+        android:fontFamily="@font/ammaanneysecondcoming"
         android:text="@string/registerConfirmation"
-        android:textColor="#673AB7"
+        android:textColor="#FFFFFF"
+        android:textSize="35sp"
         app:layout_constraintEnd_toEndOf="@+id/email_field"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/email_field"
         app:layout_constraintTop_toBottomOf="@+id/email_field" />
 
-    <TextView
-        android:id="@+id/appTitle_register"
-        android:layout_width="213dp"
-        android:layout_height="63dp"
-        android:text="@string/appTitle"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="#EB8342"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.073" />
-
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="262dp"
         android:layout_height="29dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="24dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/email_field"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.464"
         app:layout_constraintStart_toStartOf="@+id/email_field"
-        app:layout_constraintTop_toBottomOf="@+id/email_field"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/registerButton">
 
         <TextView
             android:id="@+id/alreadyAccount_register"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fontFamily="@font/ammaanneysecondcoming"
             android:text="Hai già un account?"
             android:textAlignment="center"
-            android:textColor="#673AB7" />
+            android:textColor="#42AAF5"
+            android:textSize="18sp" />
+
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="129dp"
+        android:layout_height="187dp"
+        android:layout_weight="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/zampa" />
 </androidx.constraintlayout.widget.ConstraintLayout>

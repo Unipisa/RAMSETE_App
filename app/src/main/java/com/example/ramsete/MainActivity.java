@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -43,6 +44,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //set fullscreen
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         //UI can now FREEZE but it's NOT GOOD AND HAS TO BE DELETED
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -59,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //registers a listener on that button
         scanBtn.setOnClickListener(this);
 
-        //quiz button linked with quiz id
+        /*//quiz button linked with quiz id
         quiz = (Button) findViewById(R.id.quiz);
         //registered listener on button with "quiz" id
         //anonymously defined in its call
@@ -106,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
             }
-        });
+        });*/
     }
 
     //overrides onClick (of button with scanBtn id) that now uses scanCode function
