@@ -104,6 +104,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     //and compare it with the given one
                     Integer intPassH = parseInt(strPassH.toString().trim());
                     Intent resultIntent = new Intent();
+                    //put string and password as strings for main activity
                     resultIntent.putExtra("USER_NAME",userName.getText().toString());
                     resultIntent.putExtra("USER_PASS", pass.getText().toString().hashCode());
                     if(pass.getText().toString().hashCode() == intPassH){

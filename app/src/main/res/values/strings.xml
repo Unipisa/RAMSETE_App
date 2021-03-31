@@ -1,21 +1,25 @@
 <resources>
     <string name="app_name">Ramsete</string>
-    <string name="trova_il_qr">Trova il QR!</string>
+    <string name="trova_il_qr">CLICCA PER TROVARE IL QR!</string>
     <string name="new_scan">Nuova Scan</string>
     <string name="help">Aiuto</string>
-    <string name="dammi_il_numero">dammi il numero!</string>
+    <string name="dammi_il_numero">DAMMI IL NUMERO!</string>
     <string name="quiz">Quiz</string>
-    <string name="userNameString">Inserisci il Nome Utente</string>
+    <string name="userNameString">NOME UTENTE</string>
     <string name="userPasswordString">Inserisci la Password</string>
     <string name="loginButtonString">Login</string>
-    <string name="passHint">Password</string>
-    <string name="userName_register">Scegli il Nome Utente</string>
-    <string name="pass_register">Scegli la Password</string>
-    <string name="confirmPass_register">Riscrivi la Password</string>
-    <string name="email_register">Inserisci la tua email</string>
+    <string name="passHint">PASSWORD</string>
+    <string name="userName_register">SCEGLI IL NOME UTENTE</string>
+    <string name="pass_register">SCEGLI LA PASSWORD</string>
+    <string name="confirmPass_register">RISCRIVI LA PASSWORD</string>
+    <string name="email_register">INSERISCI LA TUA EMAIL</string>
     <string name="appTitle">Mistero al Museo</string>
     <string name="loginTitle">Login</string>
     <string name="registerTitle">Registrati</string>
     <string name="registerConfirmation">Fatto</string>
     <string name="incorrectUsrNmOrPsw_login">Username o password non corretti!</string>
+    <string name="redo_yes">Sì</string>
+    <string name="redo_no">No</string>
+    <string name="redo_question">Hai già trovato questo QR, se procedi resetterai il tuo punteggio precedente... Vuoi continuare?</string>
+    <string name="redo_titleText">Uh... Oh...</string>
 </resources>

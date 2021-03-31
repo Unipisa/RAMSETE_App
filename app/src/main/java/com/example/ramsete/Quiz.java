@@ -1,12 +1,30 @@
 package com.example.ramsete;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Iterator;
+
+import static java.lang.Integer.parseInt;
 
 public class Quiz extends AppCompatActivity {
 
@@ -14,6 +32,12 @@ public class Quiz extends AppCompatActivity {
     String url = null;
     //url for testing
     //"https://www.opinionstage.com/nastilucia1/inizia-la-tua-avventura-nel-museo?wid=%2Fnastilucia1%2Finizia-la-tua-avventura-nel-museohttps://www.opinionstage.com/nastilucia1/inizia-la-tua-avventura-nel-museo?wid=%2Fnastilucia1%2Finizia-la-tua-avventura-nel-museo-0&em=1&comments=&referring_widget=%2Fnastilucia1%2Finizia-la-tua-avventura-nel-museo&autoswitch=1&of=nastilucia1&os_utm_source=&referring_widget=%2Fnastilucia1%2Finizia-la-tua-avventura-nel-museo&autoswitch=1&of=nastilucia1&os_utm_source=";
+
+    //bonus points based on #qr found
+    int bonus = 0;
+
+    //username for ops with server
+    String usrName= null;
 
     //webview seen by user
     private WebView myWebView;
@@ -34,10 +58,104 @@ public class Quiz extends AppCompatActivity {
 
         //get settings to see whole page
         myWebSettings = myWebView.getSettings();
+
+        //get url from intent's extra data
+        url = getIntent().getStringExtra("CERTOSA_PAGE_ID");
+        //get username from intent's extra data
+        usrName = getIntent().getStringExtra("USER_NAME");
+
+        //better reset bonus here too
+        bonus = 0;
+
+        //take QRID (3rd part of url)
+        String[] segmnUrl = url.split("/");
+        //check if QRID already present
+        URL urlQRIDCheck = null;
+        try {
+            urlQRIDCheck = new URL("https://gamificationmuseo.ml/nebettaui.php?op=addQR&name="+usrName+"&QR="+segmnUrl[3]);
+
+
+            URLConnection urlCon = urlQRIDCheck.openConnection();
+            urlCon.connect();
+
+            //buffers to memorize all lines from the site
+            BufferedReader hPassBUf = new BufferedReader(new InputStreamReader(urlCon.getInputStream()));
+            StringBuffer strBuf = new StringBuffer();
+            String line;
+            //read all lines
+            while ((line = hPassBUf.readLine()) != null) {
+                strBuf.append(line);
+            }
+
+            //first convert the string into a JSONObject
+            JSONObject usrData = (JSONObject) new JSONParser().parse(strBuf.toString());
+
+            //and get result needed (state of QR ID added)
+            Object result = ((JSONObject) usrData).get("result");
+
+            //check if result==null (operation went wrong)
+            if (result == null) {
+                Toast.makeText(this, "Qualcosa è andato storto, prova a inquadrare di nuovo il QR.", Toast.LENGTH_LONG).show();
+                //terminate activity if op went wrong
+                finish();
+            }
+
+            //confirmation not null so usrData should be not null
+            //counts #qr, if #qr % 2 == 0 then adds bonus points to current qr
+            //jsonarray in the jsonobject returned
+            JSONArray qrArr = (JSONArray) ((JSONObject)usrData).get("progress");
+            if(qrArr == null){
+                System.out.println("l'array c'è");
+            }
+            //iterator for qr array
+            Iterator<JSONObject> iterator = qrArr.iterator();
+            //number of qrs
+            int countQR = 0;
+            //counts all qrs
+            while(iterator.hasNext()){
+                System.out.println(iterator.next());
+                countQR++;
+            }
+            //every 2 qrs gives bouns
+            if((countQR % 2) == 0){
+                Toast.makeText(this, "Yuhuu! Questo QR ti dà punti bonus!", Toast.LENGTH_LONG).show();
+                bonus += 3;
+            }
+
+            //get the confirmation
+            //see if it's different from 0
+            Integer intQRCheck = parseInt(result.toString().trim());
+            Intent resultIntent = new Intent();
+            if (intQRCheck == 1) { //this is the code for first qr found
+                //if confirmation ok return result and terminate activity
+                Toast.makeText(this, "Fantastico, hai trovato il tuo primo QR!", Toast.LENGTH_LONG).show();
+            } else if(intQRCheck == 2){ // code for QR already found
+                //declare/initialize new intent and start popup activity
+                Intent popIntent = new Intent(this,Pop.class);
+                startActivityForResult(popIntent,3);
+
+            }else if(intQRCheck < 0){//-1 is update gone wrong and -2 is QR null, no need to differentiate
+                //still terminate activity
+                Toast.makeText(getApplicationContext(), "errore nell'aggiunta del QR", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            Toast.makeText(getApplicationContext(), "aggiunto "+segmnUrl[3]+" QR", Toast.LENGTH_SHORT).show();
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            System.err.println("Error parsing JSONObject while adding QR");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            System.err.println("Error in the url while adding QR");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Error receiving data while adding QR");
+        }
+
         //enables JS execution in the webview
         myWebSettings.setJavaScriptEnabled(true);
         //JS interface initialization
-        js = new JavaScriptInterface(this, myWebView, "JavaScriptInterface");
+        js = new JavaScriptInterface(this, myWebView, "JavaScriptInterface",usrName,segmnUrl[3],bonus);
         //adding JS to the webview
         myWebView.addJavascriptInterface(js, js.name);
         //add score observer when page has finished loading to the client
@@ -51,10 +169,11 @@ public class Quiz extends AppCompatActivity {
                 js.observeFinalScore("header-area css-api-card-header css-api-card-header--closing");
             }
         });
-        //get url from intent's extra data
-        url = getIntent().getStringExtra("CERTOSA_PAGE_ID");
-        //load url
+
+
+        //load url of QR
         myWebView.loadUrl(url);
+
 
         //obsolete code useful to check plugin type on wordpress page (if specified with MetaTagManager)
        /* Document doc = null;
@@ -71,5 +190,19 @@ public class Quiz extends AppCompatActivity {
         String plugin_name = postwpoints.attr("content");
 
         Toast.makeText(this, plugin_name + " " + tipo, Toast.LENGTH_LONG).show(); */
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case 3:
+                //when the popup closes if result ok then close Quiz
+                if(resultCode == Activity.RESULT_OK){
+                    finish();
+                }
+
+                break;
+        }
     }
 }

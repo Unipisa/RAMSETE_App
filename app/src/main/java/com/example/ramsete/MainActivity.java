@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -28,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //all activities's requestCodes
     //login activity = 1;
     //QR activity = 0x0000c0de
+    //String for username
+    String usrName = null;
 
     //QRcode scanner button
     //also takes you to the site once the scan it's finished
@@ -40,6 +43,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //set fullscreen
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //UI can now FREEZE but it's NOT GOOD AND HAS TO BE DELETED
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -57,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //registers a listener on that button
         scanBtn.setOnClickListener(this);
 
-        //quiz button linked with quiz id
+        /*//quiz button linked with quiz id
         quiz = (Button) findViewById(R.id.quiz);
         //registered listener on button with "quiz" id
         //anonymously defined in its call
@@ -104,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
             }
-        });
+        });*/
     }
 
     //overrides onClick (of button with scanBtn id) that now uses scanCode function
@@ -135,7 +141,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case 1:{
                 //if login finished with success, give access to main activity
                 if(resultCode == Activity.RESULT_OK){
-                    Toast.makeText(this,"Login effettuato con successo!", Toast.LENGTH_LONG).show();
+                    usrName = data.getStringExtra("USER_NAME");
+                    Toast.makeText(this,"Login effettuato con successo, benvenut* "+ usrName, Toast.LENGTH_LONG).show();
                 }else{
                     //terminate app if login not good
                     finish();
@@ -153,6 +160,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         //once getContents != null they're added to the intent so Quiz class can get them
                         Intent intent = new Intent(this, Quiz.class);
                         intent.putExtra("CERTOSA_PAGE_ID", result.getContents());
+                        //TODO retrieving username could be from file in the future
+                        //adding username so ops with server available to Quiz
+                        intent.putExtra("USER_NAME",usrName);
                         //starts new Quiz activity
                         this.startActivity(intent);
 
