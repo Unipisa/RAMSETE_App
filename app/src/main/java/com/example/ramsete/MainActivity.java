@@ -1,26 +1,20 @@
 package com.example.ramsete;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -39,6 +33,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button gimPoi;
     //button that takes you to the quiz page
     Button quiz;
+
+    //the image view for the badges
+    ImageView badgeFlower;
+
+    //callback object (will be useful for closing the app)
+    public EventReceiver mainActivityTermination;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +62,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         scanBtn = findViewById(R.id.scanBtn);
         //registers a listener on that button
         scanBtn.setOnClickListener(this);
+
+        //initialize badge variables
+        badgeFlower = (ImageView) findViewById(R.id.flowerBadgeImage);
+        //initially bw because not unlocked
+        badgeFlower.setImageResource(R.drawable.spillefiorebw);
+
+        //sets up a listener in case of callback
+        setupServiceReceiver();
 
         /*//quiz button linked with quiz id
         quiz = (Button) findViewById(R.id.quiz);
@@ -132,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         integrator.initiateScan();
     }
 
-    //waits scanner result
+    //waits initiated activities'result
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         switch (requestCode) {
@@ -160,7 +168,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         //once getContents != null they're added to the intent so Quiz class can get them
                         Intent intent = new Intent(this, Quiz.class);
                         intent.putExtra("CERTOSA_PAGE_ID", result.getContents());
-                        //TODO retrieving username could be from file in the future
+                        //furthermore the callback object is put as an extra into the intent
+                        intent.putExtra("CLOSE_APP",mainActivityTermination);
+                        //TODO retrieving username could be from file in the future (for a remember me function in the login)
                         //adding username so ops with server available to Quiz
                         intent.putExtra("USER_NAME",usrName);
                         //starts new Quiz activity
@@ -179,6 +189,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    // Setup the callback for when an activity wants to close the app
+    public void setupServiceReceiver() {
+        mainActivityTermination = new EventReceiver(new Handler());
+        // This is where we specify what happens when an activity wants to close the app
+        mainActivityTermination.setReceiver(new EventReceiver.Receiver() {
+            @Override
+            public void onReceiveResult(int resultCode, Bundle resultData) {
+                //when main activity receives the "signal", closes itself
+                if (resultCode == RESULT_OK) {
 
+                    finish();
+
+                }else if (resultCode == 42){
+                    //here the quiz activity notifies that has ended
+                    //so we change the image from bw to color
+                    badgeFlower.setImageResource(R.drawable.spillefiore);
+                }
+            }
+        });
+    }
 
 }

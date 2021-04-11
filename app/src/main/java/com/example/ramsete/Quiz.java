@@ -2,8 +2,11 @@ package com.example.ramsete;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -46,6 +49,12 @@ public class Quiz extends AppCompatActivity {
     //class needed to inject JS interface into html page
     private JavaScriptInterface js;
 
+    //callback object for the javascript termination
+    //without this, the Quiz activity doesn't know when to finish
+    public EventReceiver javaScriptInterfaceTermination;
+    //callback object for main activity
+    public ResultReceiver closeApp;
+
     protected void onCreate(Bundle savedInstanceState) {
         //get caller Activity state
         super.onCreate(savedInstanceState);
@@ -69,10 +78,11 @@ public class Quiz extends AppCompatActivity {
 
         //take QRID (3rd part of url)
         String[] segmnUrl = url.split("/");
+        String QRName = segmnUrl[3];
         //check if QRID already present
         URL urlQRIDCheck = null;
         try {
-            urlQRIDCheck = new URL("https://gamificationmuseo.ml/nebettaui.php?op=addQR&name="+usrName+"&QR="+segmnUrl[3]);
+            urlQRIDCheck = new URL("https://gamificationmuseo.ml/nebettaui.php?op=addQR&name="+usrName+"&QR="+QRName);
 
 
             URLConnection urlCon = urlQRIDCheck.openConnection();
@@ -139,7 +149,7 @@ public class Quiz extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "errore nell'aggiunta del QR", Toast.LENGTH_SHORT).show();
                 finish();
             }
-            Toast.makeText(getApplicationContext(), "aggiunto "+segmnUrl[3]+" QR", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "aggiunto "+QRName+" QR", Toast.LENGTH_SHORT).show();
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -154,8 +164,13 @@ public class Quiz extends AppCompatActivity {
 
         //enables JS execution in the webview
         myWebSettings.setJavaScriptEnabled(true);
+        //need to get the callback object from main activity for message of exit app
+        closeApp = getIntent().getParcelableExtra("CLOSE_APP");
+        //before initializing the javascript interface we must setup the service receiver (for the callback)
+        setupServiceReceiver(this);
+
         //JS interface initialization
-        js = new JavaScriptInterface(this, myWebView, "JavaScriptInterface",usrName,segmnUrl[3],bonus);
+        js = new JavaScriptInterface(this, myWebView, "JavaScriptInterface",usrName,QRName,bonus,javaScriptInterfaceTermination);
         //adding JS to the webview
         myWebView.addJavascriptInterface(js, js.name);
         //add score observer when page has finished loading to the client
@@ -166,10 +181,11 @@ public class Quiz extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                js.observeFinalScore("header-area css-api-card-header css-api-card-header--closing");
+                js.observeFinalScore("question");
             }
         });
 
+        //obsolete class to watch "header-area css-api-card-header css-api-card-header--closing"
 
         //load url of QR
         myWebView.loadUrl(url);
@@ -205,4 +221,31 @@ public class Quiz extends AppCompatActivity {
                 break;
         }
     }
+
+    // Setup the callback for when data is received from the javascript interface
+    //need the context because it will be passed to the activity after the quiz
+    public void setupServiceReceiver(final Context forNewActivity) {
+        javaScriptInterfaceTermination = new EventReceiver(new Handler());
+        // This is where we specify what happens when data is received from the javascript interface
+        javaScriptInterfaceTermination.setReceiver(new EventReceiver.Receiver() {
+            @Override
+            public void onReceiveResult(int resultCode, Bundle resultData) {
+                //when the quiz has ended and the parameters are updated, the activity closes itself
+                if (resultCode == RESULT_OK) {
+                    //actually, before closing itself, creates an AfterQuizContinue activity
+                    //and passes the callback object of the main activity
+                    Intent i = new Intent(forNewActivity, AfterQuizContinue.class);
+                    i.putExtra("CLOSE_APP",closeApp);
+                    forNewActivity.startActivity(i);
+
+                    //sending a number to let main activity know the quiz ended
+                    //for now it's used to notify the main activity to change the image from bw to color
+                    closeApp.send(42,null);
+                    //then closes itself
+                    finish();
+                }
+            }
+        });
+    }
+
 }

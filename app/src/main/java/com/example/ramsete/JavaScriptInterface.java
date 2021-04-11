@@ -1,8 +1,10 @@
 package com.example.ramsete;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.ResultReceiver;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.widget.Toast;
@@ -37,6 +39,9 @@ class JavaScriptInterface {
     //bonus points are added to the current animal points
     int bonus;
 
+    //variable to communicate quiz termination with Quiz activity
+    ResultReceiver terminateQuiz = null;
+
     /** Constructor of JavaScriptInterface class
      * with this you can inject JS code into the webview specified
      *
@@ -47,13 +52,14 @@ class JavaScriptInterface {
      * @param QR id of QR found
      * @param bonus bonus points to add
      */
-    JavaScriptInterface(Context ctx, WebView webView, String name, String userName, String QR, int bonus) {
+    JavaScriptInterface(Context ctx, WebView webView, String name, String userName, String QR, int bonus,ResultReceiver terminateQuiz) {
         this.ctx = ctx;
         this.webView = webView;
         this.name = name;
         this.userName = userName;
         this.QR = QR;
         this.bonus = bonus;
+        this.terminateQuiz = terminateQuiz;
     }
     //mi dirà quando cambia l'elemento che mi interessa
 
@@ -67,13 +73,14 @@ class JavaScriptInterface {
         //newValue is actually a sentence
         //let's split it
         //newValSplit[0]->points
-        String[] newValSplit = newValue.split("/");
+        String[] newValSplit = newValue.split(" ");
 
         //adding bonus points to current animal
-        int pointsTotal = Integer.parseInt(newValSplit[0]) + bonus;
+        int pointsTotal = Integer.parseInt(newValSplit[3]) + bonus;
 
         //animalSplit[1]->animal name
         String[] animalSplit = newValSplit[1].split(" ");
+        //changed-> animal is now into newvalsplit[5]
 
         //Reset QR
         URL urlQRIDCheck = null;
@@ -131,7 +138,7 @@ class JavaScriptInterface {
 
         //then add points to qr
         try {
-            urlQRIDCheck = new URL("https://gamificationmuseo.ml/nebettaui.php?op=updatePoints&name="+userName+"&QR="+QR+"&animal="+animalSplit[1]+"&points="+pointsTotal);
+            urlQRIDCheck = new URL("https://gamificationmuseo.ml/nebettaui.php?op=updatePoints&name="+userName+"&QR="+QR+"&animal="+newValSplit[5]+"&points="+pointsTotal);
 
             URLConnection urlCon = urlQRIDCheck.openConnection();
             urlCon.connect();
@@ -182,6 +189,9 @@ class JavaScriptInterface {
         }
 
         Toast.makeText(ctx, "Reset QR & punti aggiunti con successo!", Toast.LENGTH_SHORT).show();
+
+        //terminate quiz activity
+        terminateQuiz.send(Activity.RESULT_OK, null);
 
     }
     //version required at least KITKAT
